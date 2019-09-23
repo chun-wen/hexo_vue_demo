@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+// import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/pages/login'
 import Dashboard from '@/components/dashboard'
 import Products from '@/components/pages/products'
@@ -16,12 +16,12 @@ export default new Router({
       redirect: '/login',
       // component:Login,
     },
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld,
-      meta: { requiresAuth: true },
-    },
+    // {
+    //   path: '/',
+    //   name: 'HelloWorld',
+    //   component: HelloWorld,
+    //   meta: { requiresAuth: true },
+    // },
     {
       path: '/login',
       name: 'Login',

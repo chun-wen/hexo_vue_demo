@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <!-- <router-view /> -->
   </div>
 </template>
 
@@ -9,12 +8,7 @@
 export default {
   name: "App",
   created() {
-    const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
-    //‘https://vue-course-api.hexschool.io/api/chunwen/products’
-    console.log(process.env.APIPATH, process.env.CUSTOMPATH);
-    this.$http.get(api).then(response => {
-      console.log(response.data);
-    });
+   
   }
 };
 </script>

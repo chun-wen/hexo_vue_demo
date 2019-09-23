@@ -4,6 +4,8 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'bootstrap'
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 // import $ from 'jquery'
 
 //自定義組件
@@ -14,6 +16,7 @@ Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 axios.defaults.withCredentials = true;
 
+Vue.component('Loading', Loading);
 
 /* eslint-disable no-new */
 new Vue({

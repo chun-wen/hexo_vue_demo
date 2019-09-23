@@ -3,6 +3,10 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import 'bootstrap'
+// import $ from 'jquery'
+
+//自定義組件
 import App from './App'
 import router from './router'
 
@@ -15,6 +19,7 @@ axios.defaults.withCredentials = true;
 new Vue({
   el: '#app',
   router,
+  // $,
   components: { App },
   template: '<App/>'
 })

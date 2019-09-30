@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 // import HelloWorld from '@/components/HelloWorld'
-import Login from '@/components/pages/login'
+import Login from '@/components/login'
 import Dashboard from '@/components/dashboard'
-import Products from '@/components/pages/products'
+import Products from '@/components/dashboardPages/products'
 
 
 Vue.use(Router)

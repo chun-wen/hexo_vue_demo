@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import sidebar from "./sidebar";
-import navbar from "./navbar";
+import sidebar from "./dashboardPages/sidebar";
+import navbar from "./dashboardPages/navbar";
 
 export default {
   components: {

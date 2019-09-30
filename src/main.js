@@ -6,7 +6,9 @@ import VueAxios from 'vue-axios'
 import 'bootstrap'
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-// import $ from 'jquery'
+import $ from 'jquery'
+window.$ = $;
+
 
 //自定義組件
 import App from './App'
@@ -22,7 +24,6 @@ Vue.component('Loading', Loading);
 new Vue({
   el: '#app',
   router,
-  // $,
   components: { App },
   template: '<App/>'
 })

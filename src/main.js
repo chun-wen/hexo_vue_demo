@@ -13,6 +13,7 @@ window.$ = $;
 //自定義組件
 import App from './App'
 import router from './router'
+import './bus'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)

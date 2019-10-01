@@ -96,6 +96,10 @@ export default {
       this.$emit("update");
     }
   },
+  data(){
+      return{
+      }
+  },
   uploadFile(){
       console.log(this);  //確認圖片位置
       const uploadedFile = this.$refs.files.files[0];

@@ -1,6 +1,7 @@
 <template>
   <div>
     <loading :active.sync="isLoading"></loading>
+    <!-- <Loading :active.sync="isLoading"></Loading> -->
     <div class="text-right mt-4">
       <button class="btn-primary" @click="modalShow(true)">建立新的產品</button>
     </div>
@@ -30,6 +31,7 @@
         </tr>
       </tbody>
     </table>
+    <pagination :pagination="pagination" @emitPage="getProducts"></pagination>
     <!-- Modal -->
     <!-- 新增產品/編輯產品 -->
     <div class="modal fade" id="productModal" tabindex="-1"
@@ -146,10 +148,15 @@
 
 <script>
 // import $ from "jquery";
+import pagination from "./pagination";
 export default {
+  components:{
+   pagination
+  },
   data() {
     return {
       products: [],
+      pagination:{},
       tempProduct:{},
       isNew:false,
       isLoading: false,
@@ -159,8 +166,8 @@ export default {
     };
   },
   methods: {
-    getProducts() {
-      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products`;
+    getProducts(page =1) {
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products?page=${page}`;
       //‘https://vue-course-api.hexschool.io/api/chunwen/admin/products’
       const vm = this;
       // console.log(process.env.APIPATH, process.env.CUSTOMPATH);
@@ -170,6 +177,7 @@ export default {
         console.log(response.data);
         vm.isLoading = false;
         vm.products = response.data.products; //開啟console.log確認是否成功
+        vm.pagination = response.data.pagination; //將變數存入
       });
     },
     modalShow(isNew,item) {
@@ -231,17 +239,22 @@ export default {
       const uploadedFile = this.$refs.files.files[0];
       const vm =this;
       const formData = new FormData();
-      formData.append('file-to-upload',uploadedFile);
-      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
-       vm.status.fileUploading = true;
-      this.$http.post(url, formData,{
+      formData.append('file-to-upload',uploadedFile) ;
+      vm.status.fileUploading= true;
+      const url =`${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
+      this.$http.post(url,formData,{
         headers:{
           'Content-Type':'multipart/form-data'
         }
-      }).then((response) =>{
-         vm.status.fileUploading = false;
+      }).then(response =>{
+        // console.log(response.data)
         if(response.data.success){
-          vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl);
+          // vm.tempProduct.imageUrl = response.data.imageUrl;
+          vm.$set(vm.tempProduct,'imageUrl',response.data.imageUrl);
+          vm.status.fileUploading= false;
+        }else{
+          this.$bus.$emit('message:push',response.data.message,'danger');
+          vm.status.fileUploading= false;
         }
       })
     }

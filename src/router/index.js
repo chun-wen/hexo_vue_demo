@@ -4,6 +4,8 @@ import Router from 'vue-router'
 import Login from '@/components/login'
 import Dashboard from '@/components/dashboard'
 import Products from '@/components/dashboardPages/products'
+import Coupon from "@/components/dashboardPages/coupon";
+import Order from "@/components/dashboardPages/order";
 
 
 Vue.use(Router)
@@ -36,11 +38,24 @@ export default new Router({
           name: 'Products',
           component: Products,
           meta: { requiresAuth: true },
+        },
+        {
+          path: 'coupon',
+          name: 'Coupon',
+          component: Coupon,
+          meta: { requiresAuth: true },
+        },
+        {
+          path: 'order',
+          name: 'Order',
+          component: Order,
+          meta: { requiresAuth: true },
         }
       ]
     }
   ]
 })
+
 
 // router.beforeEach((to, from, next) => {
 //   console.log('to:', to, 'from:', from, 'next', next) //要使用`next`方法，否則hook不會被resolved

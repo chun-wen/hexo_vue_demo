@@ -14,12 +14,16 @@ window.$ = $;
 import App from './App'
 import router from './router'
 import './bus'
+import currency from './filter/currencyFilter'
+import timestamp from './filter/timestampToData'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 axios.defaults.withCredentials = true;
 
 Vue.component('Loading', Loading);
+Vue.filter('currency', currency); //自定義 元件
+Vue.filter('timestampToData',timestamp)
 
 /* eslint-disable no-new */
 new Vue({

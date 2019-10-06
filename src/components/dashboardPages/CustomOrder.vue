@@ -23,7 +23,8 @@
             <button
               type="button"
               class="btn btn-outline-secondary btn-sm"
-              @click="productDetail(item.id)">
+              @click="productDetail(item.id)"
+            >
               <i class="fas fa-spinner fa-spin" v-if="status.loadingItem === item.id"></i>
               查看更多
             </button>
@@ -36,11 +37,14 @@
       </div>
     </div>
     <!-- 產品列表卡片modal -->
-    <div class="modal fade" id="productModal"
+    <div
+      class="modal fade"
+      id="productModal"
       tabindex="-1"
       role="dialog"
       aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
+      aria-hidden="true"
+    >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -50,28 +54,26 @@
             </button>
           </div>
           <div class="modal-body">
-            <div
-            style="height: 150px; background-size: cover; background-position: center"
-            :style="{ backgroundImage: `url(${product.imageUrl})` }"
-            ></div>
-            <span class="badge badge-secondary float-right ml-2">{{product.category}}</span>
-            <h5 class="card-title">
-              <a href="#" class="text-dark">{{product.title}}</a>
-            </h5>
-            <p class="card-text">{{product.description}}</p>
+            <img :src="product.imageUrl" class="img-fluid" alt />
+            <blockquote class="blockquote mt-3">
+              <p class="mb-0">{{ product.content }}</p>
+              <footer class="blockquote-footer text-right">{{ product.description }}</footer>
+            </blockquote>
             <div class="d-flex justify-content-between align-items-baseline">
               <del class="h6">原價 {{product.origin_price}}</del>
               <div class="h5">現在只要 {{product.price}}</div>
             </div>
-            <select name="" class="form-control mt-3" v-model="product.num">
-              <!-- <option selected> 選購一{{product.unit}}</option> -->
+            <select class="form-control mt-3" v-model="product.num">
               <option :value="num" v-for="num in 10" :key="num">
-                選購{{num}}{{product.unit}}
+                選購 {{num}} {{product.unit}}
               </option>
             </select>
           </div>
           <div class="modal-footer">
-            <span>小計{{product.num * product.price}}</span>
+            <div class="text-muted text-nowrap mr-3">
+              小計
+              <strong>{{ product.num * product.price }}</strong> 元
+            </div>
             <button type="button" class="btn btn-primary">加到購物車</button>
           </div>
         </div>
@@ -90,11 +92,12 @@ export default {
   data() {
     return {
       products: [],
-      product:{},
+      product: {
+      },
       isLoading: false,
       pagination: {},
-      status:{
-        loadingItem:'',
+      status: {
+        loadingItem: ""
       }
     };
   },
@@ -116,11 +119,11 @@ export default {
       // vm.isLoading = true;
       vm.status.loadingItem = id;
       this.$http.get(api).then(response => {
-        console.log(response.data);
-        $("#productModal").modal("show");
         vm.product = response.data.product; //開啟console.log確認是否成功
-        response.data.product.num = 1; //將數量設為ㄧ
-         vm.status.loadingItem = '';
+        $("#productModal").modal("show");
+        // response.data.product.num=1;
+        console.log(response.data);
+        vm.status.loadingItem = "";
       });
     }
   },

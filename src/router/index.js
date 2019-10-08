@@ -19,11 +19,6 @@ export default new Router({
       // component:Login,
     },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    },
-    {
       path: '/admin',
       name: 'Dashboard',
       component: Dashboard,
@@ -49,7 +44,12 @@ export default new Router({
       ]
     },
     {
-      path: '/',
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },   
+    {
+      path: '/login',
       name: 'custom_dashboard',
       component: Dashboard,
       children: [

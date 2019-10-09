@@ -16,60 +16,59 @@
               <div class="col-sm-4">
               <div class="form-group">
                   <label for="image">輸入圖片網址</label>
-                  <input type="text" class="form-control" id="image" placeholder="請輸入圖片連結" v-model="tempProduct.imageUrl" />
+                  <input type="text" class="form-control" id="image" placeholder="請輸入圖片連結" v-model="editmodal.imageUrl" />
               </div>
               <div class="form-group">
                   <label for="customFile">
                   或 上傳圖片
-                  <!-- <i class="fas fa-spinner fa-spin"></i> -->
                   <i class="fas fa-spinner fa-spin" v-if="status.fileUploading"></i>
                   </label>
                   <input type="file" id="customFile" class="form-control" ref="files" @change="uploadFile"/>
-                  <img :src="tempProduct.imageUrl" class="img-fluid" alt="">
+                  <img :src="editmodal.imageUrl" class="img-fluid" alt="">
               </div>
               </div>
               <div class="col-sm-8">
               <div class="form-group">
                   <label for="title">標題</label>
-                  <input type="text" class="form-control" id="title" placeholder="請輸入標題" v-model="tempProduct.title"/>
+                  <input type="text" class="form-control" id="title" placeholder="請輸入標題" v-model="editmodal.title"/>
               </div>
 
               <div class="form-row">
                   <div class="form-group col-md-6">
                   <label for="category">分類</label>
-                  <input type="text" class="form-control" id="category" placeholder="請輸入分類" v-model="tempProduct.category" />
+                  <input type="text" class="form-control" id="category" placeholder="請輸入分類" v-model="editmodal.category" />
                   </div>
                   <div class="form-group col-md-6">
                   <label for="price">單位</label>
-                  <input type="unit" class="form-control" id="unit" placeholder="請輸入單位" v-model="tempProduct.unit" />
+                  <input type="unit" class="form-control" id="unit" placeholder="請輸入單位" v-model="editmodal.unit" />
                   </div>
               </div>
 
               <div class="form-row">
                   <div class="form-group col-md-6">
                   <label for="origin_price">原價</label>
-                  <input type="number" class="form-control" id="origin_price" placeholder="請輸入原價" v-model="tempProduct.origin_price" />
+                  <input type="number" class="form-control" id="origin_price" placeholder="請輸入原價" v-model="editmodal.origin_price" />
                   </div>
                   <div class="form-group col-md-6">
                   <label for="price">售價</label>
-                  <input type="number" class="form-control" id="price" placeholder="請輸入售價" v-model="tempProduct.price"/>
+                  <input type="number" class="form-control" id="price" placeholder="請輸入售價" v-model="editmodal.price"/>
                   </div>
               </div>
               <hr/>
 
               <div class="form-group">
                   <label for="description">產品描述</label>
-                  <textarea type="text" class="form-control" id="description" placeholder="請輸入產品描述" v-model="tempProduct.description"></textarea>
+                  <textarea type="text" class="form-control" id="description" placeholder="請輸入產品描述" v-model="editmodal.description"></textarea>
               </div>
               <div class="form-group">
                   <label for="content">說明內容</label>
-                  <textarea type="text" class="form-control" id="content" placeholder="請輸入產品說明內容" v-model="tempProduct.content"></textarea>
+                  <textarea type="text" class="form-control" id="content" placeholder="請輸入產品說明內容" v-model="editmodal.content"></textarea>
               </div>
               <div class="form-group">
                   <div class="form-check">
                   <input class="form-check-input" type="checkbox" 
                   id="is_enabled" 
-                  v-model="tempProduct.is_enabled"
+                  v-model="editmodal.is_enabled"
                   :true-value="1" :false-value="0" />
                   <label class="form-check-label" for="is_enabled">是否啟用</label>
                   </div>
@@ -79,7 +78,7 @@
           </div>
           <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-primary" @click="updateProduct(item)">確認</button>
+          <button type="button" class="btn btn-primary" @click="updateProduct">確認</button>
           </div>
       </div>
       </div>
@@ -88,9 +87,13 @@
 <script>
 export default {
   name: "editmodal",
-  // props: ["editmodal","status"], // 接收父層傳來的資料
+  // data(){
+  //     return{
+  //       tempProduct:{}
+  //     }
+  // },
   props:{
-    editmodal:{
+    editmodal:{  //傳進tempProduct
       type:Object,
       default:{}
     },
@@ -100,21 +103,35 @@ export default {
     }
   },
   methods: {
-    updateProduct(item) { //內層click事件
-      this.$emit("update",
-        this.tempProduct =item
-      );
+    updateProduct() { //內層click事件
+      this.$emit("update");
     },
-    uploadFile(item){
-      this.$emit('change',
-      this.tempProduct =item);
+    uploadFile(){
+      // this.$emit("change");
+      console.log(this);  //確認圖片位置
+      const uploadedFile = this.$refs.files.files[0];
+      const vm =this;
+      const formData = new FormData();
+      formData.append('file-to-upload',uploadedFile) ;
+      vm.status.fileUploading= true;
+      const url =`${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
+      this.$http.post(url,formData,{
+        headers:{
+          'Content-Type':'multipart/form-data'
+        }
+      }).then(response =>{
+        // console.log(response.data)
+        if(response.data.success){
+          // vm.tempProduct.imageUrl = response.data.imageUrl;
+          vm.$set(vm.editmodal,'imageUrl',response.data.imageUrl);
+          vm.status.fileUploading= false;
+        }else{
+          this.$bus.$emit('message:push',response.data.message,'danger');
+          vm.status.fileUploading= false;
+        }
+      })
     }
   },
-  data(){
-      return{
-        tempProduct:{}
-      }
-  }
 };
 </script>
 

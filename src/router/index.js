@@ -49,7 +49,7 @@ export default new Router({
       component: Login
     },   
     {
-      path: '/login',
+      path: '/',
       name: 'custom_dashboard',
       component: Dashboard,
       children: [

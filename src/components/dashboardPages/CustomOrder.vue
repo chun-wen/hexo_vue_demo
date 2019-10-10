@@ -4,7 +4,7 @@
     <div class="row mt-4">
       <div class="col-md-4 mb-4" v-for="item in products" :key="item.id">
         <div class="card border-0 shadow-sm">
-          <div
+          <div 
             style="height: 150px; background-size: cover; background-position: center"
             :style="{ backgroundImage: `url(${item.imageUrl})` }"
           ></div>
@@ -20,15 +20,12 @@
             </div>
           </div>
           <div class="card-footer d-flex">
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-sm"
-              @click="productDetail(item.id)"
-            >
+            <button type="button" class="btn btn-outline-secondary btn-sm"
+              @click="productDetail(item.id)">
               <i class="fas fa-spinner fa-spin" v-if="status.loadingItem === item.id"></i>
               查看更多
             </button>
-            <button type="button" class="btn btn-outline-danger btn-sm ml-auto">
+            <button type="button" class="btn btn-outline-danger btn-sm ml-auto" @click="addCart(item.id)">
               <i class="fas fa-spinner fa-spin" v-if="status.loadingItem === item.id"></i>
               加到購物車
             </button>
@@ -37,14 +34,8 @@
       </div>
     </div>
     <!-- 產品列表卡片modal -->
-    <div
-      class="modal fade"
-      id="productModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="productModal"
+      tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -74,10 +65,44 @@
               小計
               <strong>{{ product.num * product.price }}</strong> 元
             </div>
-            <button type="button" class="btn btn-primary">加到購物車</button>
+            <button type="button" class="btn btn-primary" @click="addCart(product.id, product.num)">加到購物車</button>
           </div>
         </div>
       </div>
+    </div>
+    <!--  訂購列表-->
+    <table class="table w-50 mt-4">
+      <thead>
+        <tr>
+          <td colspan="2" class="text-center">品名</td>
+          <td>數量</td>
+          <td>單價</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in cart.carts" :key="item.id">
+          <td>
+            <button class="btn-outline-danger" @click="removeCartItem(item.id)">
+              <i class="far fa-trash-alt"></i>
+            </button>
+          </td>
+          <td>{{item.product.title}}</td>
+          <td>{{item.qty}}/{{ item.product.unit }}</td>
+          <td class="text-right">{{item.qty*item.product.price}}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-right">總計</td>
+          <td class="text-right">{{ cart.total }}</td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="input-group mb-3 w-50">
+          <input type="text" class="form-control" v-model="coupon_code" placeholder="請輸入優換券" aria-label="請輸入優換券" aria-describedby="button-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2" @click="addCouponCode">套用優換券</button>
+          </div>
     </div>
   </div>
 </template>
@@ -92,13 +117,14 @@ export default {
   data() {
     return {
       products: [],
-      product: {
-      },
+      product: {},
+      cart:{},
       isLoading: false,
       pagination: {},
       status: {
         loadingItem: ""
-      }
+      },
+      coupon_code:'',
     };
   },
   methods: {
@@ -119,16 +145,64 @@ export default {
       // vm.isLoading = true;
       vm.status.loadingItem = id;
       this.$http.get(api).then(response => {
-        vm.product = response.data.product; //開啟console.log確認是否成功
+        response.data.product.num=1;
+        vm.product = response.data.product; //將資料傳進實體內
         $("#productModal").modal("show");
-        // response.data.product.num=1;
         console.log(response.data);
         vm.status.loadingItem = "";
       });
-    }
+    },
+    //加入購物車
+    addCart(id, qty=1 ){
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      vm.status.loadingItem = id;
+      const cart ={
+         product_id:id,
+         qty,
+      }
+      this.$http.post(api,{data:cart}).then(response => {
+        console.log(response.data);
+        $("#productModal").modal("hide");
+        vm.status.loadingItem = "";
+        vm.getCart();
+      });
+    },
+    // 取得購物車
+    getCart(){
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      this.$http.get(api).then(response => {
+        vm.cart = response.data.data;
+        console.log(response.data);
+        vm.status.loadingItem = "";
+      });
+    },
+    // 刪除購物車
+    removeCartItem(id){
+      const vm = this;
+      vm.isLoading = true;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`;
+      this.$http.delete(api).then(response => {
+        console.log(response.data);
+        vm.getCart();
+        vm.isLoading = false;
+      });
+    },
+    addCouponCode(){
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/coupon`;
+      const coupon= {
+        code: vm.coupon_code
+      }
+      this.$http.post(api,{data:coupon}).then(response => {
+        console.log(response.data);
+      });
+    },
   },
   created() {
     this.getProducts();
+    this.getCart();
   }
 };
 </script>

@@ -8,6 +8,9 @@ import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 import $ from 'jquery'
 window.$ = $;
+import VeeValidate from 'vee-validate';
+import zhTWValidate from 'vee-validate/dist/locale/zh_TW';
+
 
 
 //自定義組件
@@ -15,15 +18,20 @@ import App from './App'
 import router from './router'
 import './bus'
 import currency from './filter/currencyFilter'
-import timestamp from './filter/timestampToData'
+
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 axios.defaults.withCredentials = true;
+Vue.use(VeeValidate, {
+  events: 'input|blur',
+});
+VeeValidate.Validator.localize('zh_TW', zhTWValidate)
+
 
 Vue.component('Loading', Loading);
 Vue.filter('currency', currency); //自定義 元件
-Vue.filter('timestampToData',timestamp)
+// Vue.filter('timestampToData',timestamp)
 
 /* eslint-disable no-new */
 new Vue({

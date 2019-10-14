@@ -6,19 +6,19 @@
     </div>
     <table class="table mt-4">
       <thead>
-        <th width="120">名稱</th>
+        <th>名稱</th>
         <th>優惠碼</th>
         <th>折扣百分比</th>
-        <th width="120">到期日</th>
-        <th width="100">是否啟用</th>
+        <th>到期日</th>
+        <th>是否啟用</th>
         <th width="120">編輯</th>
       </thead>
       <tbody>
         <tr v-for="item in coupons" :key="item.due_date">
-          <td>{{item.title}}</td>
-          <td>{{item.code}}</td>
-          <td>{{item.percent}}</td>
-          <td>{{item.due_date}}</td>
+          <td class="align-middle">{{item.title}}</td>
+          <td class="align-middle">{{item.code}}</td>
+          <td class="align-middle">{{item.percent}}</td>
+          <td class="align-middle">{{item.due_date}}</td>
           <td>
             <span v-if="item.is_enabled" class="text-success">啟用</span>
             <span v-else>未啟用</span>
@@ -36,7 +36,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">新增優惠券</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -54,7 +54,7 @@
             </div>
             <div class="form-group">
               <label for="due_date">到期日</label>
-              <input type="date" class="form-control" id="due_date" v-model="due_date" />
+              <input type="date" class="form-control" id="due_date" v-model="tempCoupon.due_date" />
             </div>
             <div class="form-group">
               <label for="price">折扣百分比</label>
@@ -118,7 +118,8 @@ export default {
       isLoading: false,
       coupons: [], //這邊是儲存取得商品列表資料
       tempCoupon: {}, //存放新增/編輯時資料
-      isNew: false
+      isNew: false,
+      pagination:{}
     };
   },
   // watch:{
@@ -142,11 +143,15 @@ export default {
     },
     addCoupon() {
       const vm = this;
+      const timestamp = new Date(vm.tempCoupon.due_date); //取得時間物件
+      console.log(timestamp);  //Fri Oct 25 2019 08:00:00 GMT+0800 (台北標準時間)
+      // vm.tempCoupon.due_date = Math.floor(new Date(vm.tempCoupon.due_date)) / 1000; //取得timestamp格式
+      // console.log(vm.tempCoupon.due_date)
       vm.isLoading = true;
       let httpMethod = "post";
       let api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon`;
       if (!vm.isNew) {
-        api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon/{vm.tempCoupon.id}`;
+        api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`;
         httpMethod = "put";
       }
       this.$http[httpMethod](api, { data: vm.tempCoupon }).then(response => {
@@ -164,7 +169,8 @@ export default {
     },
     modalShow(isNew, item) {
       if (isNew) {
-        (this.tempCoupon = {}), (this.isNew = true); //將isNew存入實體中
+        this.tempCoupon = {}, 
+        this.isNew = true; //將isNew存入實體中
       } else {
         this.tempCoupon = Object.assign({}, item);
         this.isNew = false;
@@ -178,7 +184,7 @@ export default {
     },
     delCoupon(){
       const vm = this;
-      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon${vm.tempCoupon.id}`;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/coupon/${vm.tempCoupon.id}`;
       vm.isLoading = true;
       this.$http.delete(api).then(response => {
         console.log(response.data);

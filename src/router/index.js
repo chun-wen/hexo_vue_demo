@@ -7,7 +7,8 @@ import Products from '@/components/dashboardPages/products'
 import Coupon from "@/components/dashboardPages/coupon";
 import Order from "@/components/dashboardPages/order";
 import CustomOrder from "@/components/dashboardPages/CustomOrder"
-
+import CustomCheckOut from "@/components/CustomCheckOut"
+import Home from "@/components/home"
 
 Vue.use(Router)
 
@@ -17,6 +18,11 @@ export default new Router({
       path: '*',
       redirect: '/login',
       // component:Login,
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
     },
     {
       path: '/admin',
@@ -57,6 +63,11 @@ export default new Router({
           path: 'custom_order',
           name: 'CustomOrder',
           component: CustomOrder,
+        },
+        {
+          path: 'custom_checkout/:orderId',
+          name: 'CustomCheckOut',
+          component: CustomCheckOut,
         },
       ]
     }

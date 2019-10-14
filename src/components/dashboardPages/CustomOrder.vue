@@ -276,6 +276,9 @@ export default {
         if (valid) {
           this.$http.post(api,{data:order}).then(response => {
           console.log("訂單已建立", response);
+          if(response.data.success){
+            vm.$router.push(`/custom_checkout/${response.data.orderId}`);
+          }
         });
         }else{
           console.log('欄位不完整')
